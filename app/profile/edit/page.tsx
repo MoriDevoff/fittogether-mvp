@@ -70,7 +70,25 @@ export default function ProfileEditPage() {
     if (error) {
       setMessage(`Ошибка сохранения: ${error.message}`)
     } else {
-      setMessage("Профиль успешно сохранен")
+      try {
+        await fetch("/api/hubspot", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: authData.user.email,
+            name: formData.name,
+            firstName: formData.name,
+            city: formData.city,
+            description: formData.bio,
+            fitness_goals: formData.fitness_goals,
+            fitness_level: formData.fitness_level,
+            lifecycleStage: "lead",
+          }),
+        })
+        setMessage("Профиль успешно сохранен и отправлен в HubSpot")
+      } catch (hubspotError) {
+        setMessage(`Профиль сохранен, но HubSpot вернул ошибку: ${(hubspotError as Error).message}`)
+      }
     }
     setSaving(false)
   }
