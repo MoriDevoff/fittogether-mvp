@@ -64,12 +64,15 @@ export default function AuthPage() {
       if (signUpError) {
         setError(signUpError.message)
       } else {
-        // If email confirmation is disabled, Supabase can return a session immediately.
-        // Otherwise, ask the user to confirm email and then login.
-        if (signUpData.session) {
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        })
+
+        if (!signInError) {
           await routeAfterLogin()
         } else {
-          setSuccess("Регистрация создана. Если включено подтверждение почты — подтвердите email, затем войдите.")
+          setSuccess("Регистрация создана. Войдите, чтобы продолжить.")
           setMode("login")
         }
       }
