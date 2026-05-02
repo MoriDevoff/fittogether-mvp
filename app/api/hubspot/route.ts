@@ -10,15 +10,17 @@ export async function POST(request: Request) {
   }
 
   try {
+    const fullName = body.name || body.firstName || ""
+    const [firstName, ...rest] = fullName.trim().split(" ")
+    const lastName = rest.join(" ")
+
     const contact = await upsertContact({
       email,
-      firstname: body.firstName,
-      lastname: body.lastName,
-      name: body.name,
+      firstname: firstName || undefined,
+      lastname: lastName || undefined,
       phone: body.phone,
       company: body.company,
       city: body.city,
-      description: body.description,
       lifecyclestage: body.lifecycleStage || "lead",
       fitness_goals: body.fitness_goals || body.fitnessGoals,
       fitness_level: body.fitness_level || body.fitnessLevel,
